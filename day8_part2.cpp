@@ -27,43 +27,26 @@ std::map<char, char> findMapping(std::string (&input)[10]) {
     std::sort(std::begin(input), std::end(input), [](auto&& s1, auto&& s2) {
         return s1.size() < s2.size();
     });
-    // sort each display's segments alphabetically
-    for (auto& in : input) std::sort(std::begin(in), std::end(in));
-
-    // mapping [segment in new] -> [segment in original]
     std::map<char, char> mapping;
 
-    {
-        // first, find what 'a' (top segment) is mapped to
-        // - set difference between display of 7 and 1
-        char c;
-        std::ranges::set_difference(input[1], input[0], &c);
-        mapping[c] = 'a';
-    }
-    {
-        // count occurences of each segment
-        // expected occurences: a: 8, b: 6, c: 8, d: 7, e: 4, f: 9, g: 7
-        std::map<char, int> occ;
-        for (auto&& s : input)
-            for (char c : s)
-                ++occ[c];
+    // count occurences of each, distinguish both of the lines of 1
+    std::map<char, int> occ;
+    for (auto&& s : input)
+        for (char c : s)
+            ++occ[c];
 
-        for (auto&[c, count] : occ) {
-            if (count == 9) mapping[c] = 'f';
-            if (count == 6) mapping[c] = 'b';
-            if (count == 4) mapping[c] = 'e';
-            // both 'a' and 'c' should occur 8 times,
-            // but 'a' was already mapped
-            if (count == 8 && !mapping.contains(c))
-                mapping[c] = 'c';
-        }
-    }
-
-    // only 'd' and 'g' left - 'd' is lit on in display of 4
-    for (char c = 'a'; c <= 'g'; ++c) {
-        if (mapping.contains(c)) continue;
-        if (input[2].contains(c)) mapping[c] = 'd';
-        else mapping[c] = 'g';
+    // count occurences of each segment
+    // expected occurences: a: 8, b: 6, c: 8, d: 7, e: 4, f: 9, g: 7
+    for (auto&[c, count] : occ) {
+        if (count == 4) mapping[c] = 'e';
+        else if (count == 6) mapping[c] = 'b';
+        else if (count == 9) mapping[c] = 'f';
+        // 4 contains d (middle one) but not g (bottom one)
+        else if (count == 7 && input[2].contains(c)) mapping[c] = 'd';
+        else if (count == 7 && !input[2].contains(c)) mapping[c] = 'g';
+        // 1 contains c (top right) but not a (top)
+        else if (count == 8 && input[0].contains(c)) mapping[c] = 'c';
+        else if (count == 8 && !input[0].contains(c)) mapping[c] = 'a';
     }
 
     return mapping;
