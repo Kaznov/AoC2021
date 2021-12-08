@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# Debug files
+*.ilk
+*.pdb
+
+# vscode settings
+.vscode/
