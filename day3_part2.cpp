@@ -10,7 +10,7 @@ constexpr int kBinLen = 12; // length of binary numbers
 auto bin_to_num(const std::string& text_bin) -> uint {
     unsigned int num = 0;
     for (int i = 0; i < kBinLen; ++i)
-        num = (num << 1) | text_bin[i] == '1';
+        num = (num << 1) | (text_bin[i] == '1');
     return num;
 };
 

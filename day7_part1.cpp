@@ -31,7 +31,7 @@ class median_result {
     template <typename RandomIt, typename Compare>
     friend auto median(RandomIt begin, RandomIt end, Compare comp)
         -> median_result<
-            std::remove_cv_t<std::remove_reference_t<decltype(*begin)>>>
+            std::remove_cv_t<std::remove_reference_t<decltype(*begin)>>>;
 
     private:
     median_result() : state_{state::empty} {}

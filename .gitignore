@@ -36,4 +36,7 @@
 *.pdb
 
 # vscode settings
+.cache/
 .vscode/
+# cmake artifacts
+build/
