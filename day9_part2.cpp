@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
- int main() {
+int main() {
     std::vector<std::string> board;
     std::string next;
 
