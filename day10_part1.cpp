@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-int main () {
+int main() {
     std::string open = "([{<", close = ")]}>";
     int values[] = {3, 57, 1197, 25137};
     std::string line;
