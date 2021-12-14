@@ -17,7 +17,7 @@ int main() {
         auto adjacent = board.adjacent(field);
         low_point_sum += 
             field_level * stdr::all_of(adjacent,
-                                       [=](int l){ return l > field_level; },
+                                       utils::greater_than<int>(field_level),
                                        level);
         for (auto& adj: adjacent)
             if (field_level < level(adj) && level(adj) < 10)

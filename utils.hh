@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <cassert>
 #include <cctype>
@@ -42,9 +44,18 @@ using ullong = unsigned long long;
 
 template <typename T>
 using vec = std::vector<T>;
-using string = std::string;
-template <typename T, typename U>
-using hashmap = std::unordered_map<T, U>;
+
+using std::vector;
+using std::string;
+using std::set;
+using std::map;
+using std::queue;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::swap;
+using std::max;
+using std::min;
 
 namespace stdv = std::views;
 namespace stdr = std::ranges;
@@ -79,6 +90,10 @@ struct Board {
 
     Field get(size_t row, size_t col) {
         return Field{ fields[row][col], row, col };
+    }
+
+    T& getv(size_t row, size_t col) {
+        return fields[row][col];
     }
 
     std::vector<Field> adjacent(size_t row, size_t col) {
@@ -163,6 +178,7 @@ struct Board {
                 std::cout << element;
                 std::cout << sep;
             }
+            std::cout << std::endl;
         }
     }
 
@@ -241,6 +257,8 @@ struct ScanResult {
         attached(std::make_unique<Iss>(ss.str().substr(ss.tellg()))),
         remain(*this->attached.get()) {}
 
+    operator bool() const { return success; }
+
     size_t scanned;
     bool success;
     std::unique_ptr<std::istringstream> attached;
@@ -297,14 +315,27 @@ ScanResult input_line_vector(std::vector<T>& out, std::string_view separator = "
 
 namespace detail {
 constexpr char eof = std::istream::traits_type::eof();
-template<typename>
-struct is_std_vector : std::false_type {};
 
-template<typename T, typename A>
-struct is_std_vector<std::vector<T,A>> : std::true_type {};
+template<typename Test, template<typename...> class Ref>
+struct is_specialization : std::false_type {};
 
-template< class T >
+template<template<typename...> class Ref, typename... Args>
+struct is_specialization<Ref<Args...>, Ref> : std::true_type {};
+
+template<typename Test, template<typename...> class Ref>
+inline constexpr bool is_specialization_v = is_specialization<Test, Ref>::value;
+
+template<typename T>
+using is_std_vector = is_specialization<T, std::vector>;
+
+template<typename T>
 inline constexpr bool is_std_vector_v = is_std_vector<T>::value;
+
+template<typename T>
+using is_std_pair = is_specialization<T, std::pair>;
+
+template<typename T>
+inline constexpr bool is_std_pair_v = is_std_pair<T>::value;
 
 inline void scan_delimiters(std::istream& in, std::string_view& format) {
     const char* format_ptr = format.data();
@@ -582,6 +613,21 @@ struct HashPair {
     }
 };
 
+template <
+    typename T,
+    typename H = std::conditional_t<
+        utils::detail::is_std_pair_v<T>,
+        HashPair,
+        std::hash<T>>>
+    using hashset = std::unordered_set<T, H>;
+template <
+    typename T,
+    typename U,
+    typename H = std::conditional_t<
+        utils::detail::is_std_pair_v<T>,
+        HashPair,
+        std::hash<T>>>
+    using hashmap = std::unordered_map<T, U, H>;
 
 template <typename T>
 class median_result {
@@ -666,4 +712,66 @@ auto median(Range range, Compare comp = {})
     return median(std::ranges::begin(range), std::ranges::end(range), comp);
 }
 
+template <typename Range, typename T>
+requires std::ranges::random_access_range<Range>
+bool find_pos(Range&& range, const T& element) {
+    return std::ranges::find(range, element) - std::ranges::begin(range);
 }
+
+template <typename Range, typename T>
+requires std::ranges::input_range<Range>
+bool contains(Range&& range, const T& element) {
+    return std::ranges::find(range, element) == std::ranges::end(range);
+}
+
+template <typename T, typename Comp>
+struct compares_to {
+    T v;
+    Comp comp = {};
+    template <typename U>
+    bool operator()(const U& other) { return comp(other, v); }
+};
+
+template <typename T>
+using less_than = compares_to<T, stdr::less>;
+template <typename T>
+using lesseq_than = compares_to<T, stdr::less_equal>;
+template <typename T>
+using greater_than = compares_to<T, stdr::greater>;
+template <typename T>
+using greatereq_than = compares_to<T, stdr::greater_equal>;
+template <typename T>
+using eq_to = compares_to<T, stdr::equal_to>;
+
+namespace detail {
+struct pair_first_impl {
+    template <typename T, typename U>
+    auto&& operator()(const std::pair<T, U>& p) {
+        return (p.first);
+    }
+    template <typename T, typename U>
+    auto&& operator()(std::pair<T, U>&& p) {
+        return std::move(p.first);
+    }
+};
+
+struct pair_second_impl {
+    template <typename T, typename U>
+    auto&& operator()(const std::pair<T, U>& p) {
+        return (p.second);
+    }
+    template <typename T, typename U>
+    auto&& operator()(std::pair<T, U>&& p) {
+        return std::move(p.second);
+    }
+};
+}
+
+inline namespace CPOs {
+    inline constexpr detail::pair_first_impl pair_first;
+    inline constexpr detail::pair_second_impl pair_second;
+}
+}
+
+using utils::hashmap;
+using utils::hashset;

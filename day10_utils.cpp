@@ -11,7 +11,7 @@ int main() {
         vec<char> s;
         bool ok = true;
         for (char c : line) {
-            if (open.contains(c)) s.push_back(c);
+            if (utils::contains(open,c)) s.push_back(c);
             else if (s.size() > 0 && open.find(s.back()) == close.find(c)) s.pop_back();
             else {
                 errors.push_back(values[close.find(c)]);

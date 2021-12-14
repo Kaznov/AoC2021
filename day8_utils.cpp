@@ -13,6 +13,8 @@ std::map<char, char> findMapping(vec<string> input) {
         for (char c : s)
             ++occ[c];
 
+    constexpr auto npos = string::npos;
+
     // count occurences of each segment
     // expected occurences: a: 8, b: 6, c: 8, d: 7, e: 4, f: 9, g: 7
     for (auto&[c, count] : occ) {
@@ -20,11 +22,11 @@ std::map<char, char> findMapping(vec<string> input) {
         else if (count == 6) mapping[c] = 'b';
         else if (count == 9) mapping[c] = 'f';
         // 4 contains d (middle one) but not g (bottom one)
-        else if (count == 7 && input[2].contains(c)) mapping[c] = 'd';
-        else if (count == 7 && !input[2].contains(c)) mapping[c] = 'g';
+        else if (count == 7 && input[2].find(c) != npos) mapping[c] = 'd';
+        else if (count == 7 && input[2].find(c) == npos) mapping[c] = 'g';
         // 1 contains c (top right) but not a (top)
-        else if (count == 8 && input[0].contains(c)) mapping[c] = 'c';
-        else if (count == 8 && !input[0].contains(c)) mapping[c] = 'a';
+        else if (count == 8 && input[0].find(c) != npos) mapping[c] = 'c';
+        else if (count == 8 && input[0].find(c) == npos) mapping[c] = 'a';
     }
 
     return mapping;

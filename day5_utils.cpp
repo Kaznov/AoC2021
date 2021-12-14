@@ -25,7 +25,7 @@ int main() {
         }
     }
 
-    auto more_than_one = [](auto&& p) -> bool { return p.second > 1; };
+    auto more_than_one = [](auto&& pos_count) { return pos_count.second > 1; };
 
     size_t overlaping_vents1 = 
         stdr::count_if(vents_locations1, more_than_one);
