@@ -43,7 +43,7 @@ int main() {
 
     int maxx = stdr::max_element(dots, stdr::less{}, &Dot::x)->x;
     int maxy = stdr::max_element(dots, stdr::less{}, &Dot::y)->y;
-    utils::Board<char> board(maxx + 1, maxy + 1, '.');
+    utils::Board<char> board(maxx + 1, maxy + 1, ' ');
 
     for (auto dot : dots)
         board.getv(dot.y, dot.x) = '#';

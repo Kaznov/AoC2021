@@ -7,7 +7,7 @@ int main() {
     vec<llong> errors;
     vec<llong> scores;
 
-    for (string line; std::getline(std::cin, line);) {
+    for (string line; std::getline(cin, line);) {
         vec<char> s;
         bool ok = true;
         for (char c : line) {
@@ -29,6 +29,6 @@ int main() {
         }
     }
 
-    std::cout << "Part 1: " << utils::sum(errors) << "\n"
-              << "Part 2: " << utils::median(scores) << "\n";
+    cout << "Part 1: " << utils::sum(errors) << "\n"
+         << "Part 2: " << utils::median(scores) << "\n";
 }

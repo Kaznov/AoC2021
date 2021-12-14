@@ -1,14 +1,14 @@
 #include "utils.hh"
 
-std::map<char, char> findMapping(vec<string> input) {
+map<char, char> findMapping(vec<string> input) {
     // sort all displays by length (number of segments on)
     // after that we are sure that the displays are ordered:
     // 1 7 4 x x x x x x 8
     stdr::sort(input, stdr::less{}, stdr::size);
-    std::map<char, char> mapping;
+    map<char, char> mapping;
 
     // count occurences of each, distinguish both of the lines of 1
-    std::map<char, int> occ;
+    map<char, int> occ;
     for (auto&& s : input)
         for (char c : s)
             ++occ[c];
@@ -33,7 +33,7 @@ std::map<char, char> findMapping(vec<string> input) {
 }
 
 int calculateOutput(vec<string> output,
-                    const std::map<char, char>& mapping) {
+                    const map<char, char>& mapping) {
     for (auto& s : output) {
         for (auto& c : s)
             c = mapping.at(c);
@@ -66,7 +66,7 @@ int main() {
     int result1 = 0;
     int result2 = 0;
     vec<string> input, output;
-    while (utils::input_line("{}|{}", input, output).success) {
+    while (utils::input_line("{}|{}", input, output)) {
         assert(input.size() == 10);
         assert(output.size() == 4);
         auto mapping = findMapping(input);
@@ -77,6 +77,6 @@ int main() {
         result2 += calculateOutput(output, mapping);
     }
 
-    std::cout << "Part 1: " << result1 << "\n";
-    std::cout << "Part 2: " << result2 << "\n";
+    cout << "Part 1: " << result1 << "\n";
+    cout << "Part 2: " << result2 << "\n";
 }

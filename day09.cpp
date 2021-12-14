@@ -28,8 +28,8 @@ int main() {
     stdr::partial_sort(regions, regions.begin() + 3,
                        stdr::greater{}, &utils::FindUnion<int>::Group::value);
 
-    std::cout << "Part 1: " << low_point_sum << "\n"
-              << "Part 2: " << regions[0].value
-                             * regions[1].value
-                             * regions[2].value << "\n";
+    cout << "Part 1: " << low_point_sum << "\n"
+         << "Part 2: " << regions[0].value
+                        * regions[1].value
+                        * regions[2].value << "\n";
 }

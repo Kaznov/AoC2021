@@ -65,6 +65,6 @@ int main() {
         if (boards_finished == boards.size()) break;
     }
 
-    std::cout << "Part 1: " << winner_score << "\n"
-              << "Part 2: " << loser_score << "\n";
+    cout << "Part 1: " << winner_score << "\n"
+         << "Part 2: " << loser_score << "\n";
 }

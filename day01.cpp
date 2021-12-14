@@ -7,8 +7,8 @@ int main() {
     std::adjacent_difference(std::begin(input), std::end(input),
                              std::back_inserter(increases),
                              stdr::greater{});
-    std::cout << "Part 1: " << utils::sum(increases | std::views::drop(1))
-              << "\n";
+    cout << "Part 1: " << utils::sum(increases | stdv::drop(1))
+         << "\n";
 
     int increasing_sum_count = 0;
     int last_moving_sum = 1000000;
@@ -17,5 +17,5 @@ int main() {
         if (sum > last_moving_sum) ++increasing_sum_count;
         last_moving_sum = sum;
     }
-    std::cout << "Part 2: " << increasing_sum_count << "\n";
+    cout << "Part 2: " << increasing_sum_count << "\n";
 }

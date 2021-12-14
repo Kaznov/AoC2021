@@ -1,10 +1,10 @@
 #include "utils.hh"
 
 int main() {
-    std::unordered_map<std::pair<int, int>, int, utils::HashPair> vents_locations1;
-    std::unordered_map<std::pair<int, int>, int, utils::HashPair> vents_locations2;
+    hashmap<utils::pair_of<int>, int> vents_locations1;
+    hashmap<utils::pair_of<int>, int> vents_locations2;
     int x0, y0, x1, y1;
-    while (utils::input_line("{},{} -> {},{}", x0, y0, x1, y1).success) {
+    while (utils::input_line("{},{} -> {},{}", x0, y0, x1, y1)) {
         int xdiff = x1 - x0;
         int ydiff = y1 - y0;
         auto abs = [](int x) -> int { return x >= 0 ? x : -x; };
@@ -20,8 +20,8 @@ int main() {
 
         for (int i = 0, x = x0, y = y0; i <= steps; ++i, x += xstep, y += ystep) {
             if (!diagonal)
-                ++vents_locations1[std::make_pair(x, y)];
-            ++vents_locations2[std::make_pair(x, y)];
+                ++vents_locations1[std::pair{x, y}];
+            ++vents_locations2[std::pair{x, y}];
         }
     }
 

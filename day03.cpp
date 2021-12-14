@@ -31,14 +31,14 @@ int main() {
         bits_occurences[i] += (binary_num[i] == '1' ? 1 : -1);
     
     // only bits that are more often 1
-    unsigned int gamma = 0;
+    uint gamma = 0;
     for (int i = 0; i < kBinLen; ++i) {
         gamma <<= 1;
         gamma |= bits_occurences[i] >= 0;
     }
     
     // only bits that are more often 0
-    unsigned int epsilon = ~gamma & ((1 << kBinLen) - 1);
+    uint epsilon = ~gamma & ((1 << kBinLen) - 1);
     std::cout << "Part 1: " << epsilon * gamma << "\n";
 
     vec<uint> input_nums;
@@ -46,12 +46,12 @@ int main() {
         return std::stoi(text_bin, nullptr, 2);
     };
     stdr::transform(input,
-                   std::back_inserter(input_nums), bin_to_num);
+                    std::back_inserter(input_nums), bin_to_num);
 
     stdr::sort(input_nums);
 
-    unsigned oxy_rating = ratingFinder(input_nums, false);
-    unsigned co2_rating = ratingFinder(input_nums, true);
+    uint oxy_rating = ratingFinder(input_nums, false);
+    uint co2_rating = ratingFinder(input_nums, true);
 
-    std::cout << "Part 2: " << oxy_rating * co2_rating << "\n";
+    cout << "Part 2: " << oxy_rating * co2_rating << "\n";
 }

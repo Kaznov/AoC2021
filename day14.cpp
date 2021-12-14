@@ -38,7 +38,9 @@ int main() {
 
     auto get_solution = [&]() -> llong {
         auto letters_count = count_letters();
-        auto [min, max] = stdr::minmax_element(letters_count, stdr::less{}, utils::pair_second);
+        auto [min, max] = stdr::minmax_element(letters_count,
+                                               stdr::less{},
+                                               utils::pair_second);
         return max->second - min->second;
     };
 

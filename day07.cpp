@@ -1,7 +1,7 @@
 #include "utils.hh"
 
 int main() {
-    std::vector<int> crabs;
+    vec<int> crabs;
     utils::input_vector(crabs,",");
 
     int median_v = utils::median(crabs);
@@ -9,6 +9,8 @@ int main() {
         std::begin(crabs), std::end(crabs), 0,
         [=](int acc, int next) {
             return acc + abs(next - median_v);});
+
+    cout << "Part 1: " << cost1 << "\n";
 
     int sum = utils::sum(crabs);
     int guess = std::round(static_cast<double>(sum) / crabs.size());
@@ -32,6 +34,5 @@ int main() {
         cost2 = next_cost;
     }
 
-    std::cout << "Part 1: " << cost1 << "\n"
-              << "Part 2: " << cost2 << "\n";
+    cout << "Part 2: " << cost2 << "\n";
 }
