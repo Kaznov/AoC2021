@@ -1,15 +1,17 @@
-#include "utils.hh"
+#include <algorithm>
+#include <cstdio>
+#include <numeric>
 
 // PART 1:
-// constexpr int kDays = 80;
+constexpr int kDays = 80;
 // PART 2:
-constexpr int kDays = 256;
+// constexpr int kDays = 256;
 
 int main() {
-    ulong fishes_of_epoch[9] = {0};
+    unsigned long long fishes_of_epoch[9] = {0};
     int next_fish;
 
-    while (std::cin >> next_fish)
+    while (scanf("%d,", &next_fish) == 1)
         ++fishes_of_epoch[next_fish];
 
     for (int day = 0; day < kDays; ++day) {
@@ -18,6 +20,6 @@ int main() {
         fishes_of_epoch[6] += fishes_of_epoch[8];
     }
 
-    auto sum = utils::sum(fishes_of_epoch);
-    std::cout << sum;
+    auto sum = std::accumulate(fishes_of_epoch, fishes_of_epoch + 9, 0ull);
+    printf("%llu", sum);
 }
