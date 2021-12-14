@@ -13,7 +13,7 @@ int main () {
         std::vector<char> s;
         bool ok = true;
         for (char c : line) {
-            if (open.contains(c)) s.push_back(c);
+            if (open.find(c)!=std::string::npos) s.push_back(c);
             else if (s.size() > 0 && open.find(s.back()) == close.find(c)) s.pop_back();
             else {
                 ok = false;

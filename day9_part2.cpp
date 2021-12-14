@@ -20,14 +20,16 @@ int main() {
     board.insert(board.begin(), std::string(w, '9'));
     board.push_back(std::string(w, '9'));
 
-    std::vector<int> fu (w * h);
-    std::vector<int> fus (w * h, 1);
+    // find union structure, representant of each field, possibly chained
+    std::vector<int> fu(w * h);
+    // find union structure, sum of the region - valid only for representants
+    std::vector<int> fus(w * h, 1);
 
     for (int i = 0; i < h; ++i)
         for (int j = 0; j < w; ++j)
             fu[i*w + j] = i * w + j;
 
-    auto fin = [&] (int p1) -> int {
+    auto fin = [&](int p1) -> int {
         int rep = p1;
         while (rep != fu[rep]) rep = fu[rep];
         while (p1 != rep) {

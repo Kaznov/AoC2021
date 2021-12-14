@@ -1,32 +1,10 @@
-#include <algorithm>
-#include <iostream>
-#include <map>
-#include <string>
+#include "utils.hh"
 
-struct Display {
-    std::string input[10];
-    std::string output[4];
-};
-
-Display readLine() {
-    Display d;
-    for (int i = 0; i < 10; ++i)
-        std::cin >> d.input[i];
-    char sep;
-    std::cin >> sep;
-    for (int i = 0; i < 4; ++i)
-        std::cin >> d.output[i];
-    std::cin.ignore(16, '\n');
-    return d;
-}
-
-std::map<char, char> findMapping(std::string (&input)[10]) {
+std::map<char, char> findMapping(vec<string> input) {
     // sort all displays by length (number of segments on)
     // after that we are sure that the displays are ordered:
     // 1 7 4 x x x x x x 8
-    std::sort(std::begin(input), std::end(input), [](auto&& s1, auto&& s2) {
-        return s1.size() < s2.size();
-    });
+    stdr::sort(input, stdr::less{}, stdr::size);
     std::map<char, char> mapping;
 
     // count occurences of each, distinguish both of the lines of 1
@@ -34,8 +12,8 @@ std::map<char, char> findMapping(std::string (&input)[10]) {
     for (auto&& s : input)
         for (char c : s)
             ++occ[c];
-            
-    constexpr auto npos = std::string::npos;
+
+    constexpr auto npos = string::npos;
 
     // count occurences of each segment
     // expected occurences: a: 8, b: 6, c: 8, d: 7, e: 4, f: 9, g: 7
@@ -54,15 +32,15 @@ std::map<char, char> findMapping(std::string (&input)[10]) {
     return mapping;
 }
 
-int calculateOutput(std::string (&output)[4],
+int calculateOutput(vec<string> output,
                     const std::map<char, char>& mapping) {
     for (auto& s : output) {
         for (auto& c : s)
             c = mapping.at(c);
-        std::sort(std::begin(s), std::end(s));
+        stdr::sort(s);
     }
 
-    const static std::map<std::string, int> disp_to_digit{
+    const static std::map<string, int> disp_to_digit{
         {"abcefg", 0},
         {"cf", 1},
         {"acdeg", 2},
@@ -81,18 +59,24 @@ int calculateOutput(std::string (&output)[4],
         result *= 10;
         result += disp_to_digit.at(s);
     }
-
     return result;
 }
 
 int main() {
-    int result = 0;
-
-    while (std::cin.peek() && std::cin) {
-        Display d = readLine();
-        auto mapping = findMapping(d.input);
-        result += calculateOutput(d.output, mapping);
+    int result1 = 0;
+    int result2 = 0;
+    vec<string> input, output;
+    while (utils::input_line("{}|{}", input, output).success) {
+        assert(input.size() == 10);
+        assert(output.size() == 4);
+        auto mapping = findMapping(input);
+        result1 += stdr::count_if(
+            output,
+            [](size_t s) { return s == 2 || s == 3 || s == 4 || s == 7; },
+            stdr::size);
+        result2 += calculateOutput(output, mapping);
     }
 
-    std::cout << result;
+    std::cout << "Part 1: " << result1 << "\n";
+    std::cout << "Part 2: " << result2 << "\n";
 }

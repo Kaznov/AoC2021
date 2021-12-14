@@ -38,5 +38,10 @@
 # vscode settings
 .cache/
 .vscode/
+
+# Visual Studio
+.vs/
+CMakeSettings.json
+
 # cmake artifacts
 build/

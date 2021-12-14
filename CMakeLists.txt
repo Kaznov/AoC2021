@@ -13,7 +13,7 @@ set_project_warnings(project_warnings)
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 file(GLOB SOURCE_FILES *.cpp)
