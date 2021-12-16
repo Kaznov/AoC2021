@@ -5,12 +5,12 @@
 # Adjusted for the project imath
 
 function(set_project_warnings project_name)
-  option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+  option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
   set(MSVC_WARNINGS
       /W4 # Baseline reasonable warnings
       /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
-      /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of 
+      /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of
       /w14287 # 'operator': unsigned/negative constant mismatch
       /we4289 # nonstandard extension used: 'variable': loop control variable declared in the for-loop is used outside
               # the for-loop scope
@@ -25,6 +25,13 @@ function(set_project_warnings project_name)
       /w14640 # Enable warning on thread un-safe static member initialization
       /w14826 # Conversion from 'type1' to 'type_2' is sign-extended. This may cause unexpected runtime behavior.
       /w14928 # illegal copy-initialization; more than one user-defined conversion has been implicitly applied
+      # since it is an algo contest, disable some common arithmetic warnings
+      /wd4242 # arithmetic downcast
+      /wd4244 # arithmetic downcast
+      /wd4267 # arithmetic downcast
+      /wd4838 # arithmetic downcast
+      /wd4996 # scanf family
+      /wd26451 # arithmetic overflow before casting to bigger type
       /permissive- # standards conformance mode for MSVC compiler.
   )
 
@@ -36,19 +43,25 @@ function(set_project_warnings project_name)
       -Wcast-align # warn for potential performance problem casts
       -Wunused # warn on anything being unused
       -Wpedantic # warn if non-standard C++ is used
-      -Wconversion # warn on type conversions that may lose data
       # -Wsign-conversion # warn on sign conversions
       # removed, because it triggers in Catch2 source
       -Wnull-dereference # warn if a null dereference is detected
-      -Wdouble-promotion # warn if float is implicit promoted to double
       -Wformat=2 # warn on security issues around functions that format output (ie printf)
-      -Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
+
+      -Wno-conversion # warn on type conversions that may lose data
+      -Wno-float-conversion
+      -Wno-narrowing
+      -Wno-shadow-field-in-constructor
   )
 
   if(WARNINGS_AS_ERRORS)
     set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
+  else()
+    set(CLANG_WARNINGS ${CLANG_WARNINGS} -Wno-error)
+    set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX-)
   endif()
+
 
   set(GCC_WARNINGS
       ${CLANG_WARNINGS}
@@ -57,6 +70,7 @@ function(set_project_warnings project_name)
       -Wduplicated-branches # warn if if / else branches have duplicated code
       -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
       # -Wuseless-cast # warn if you perform a cast to the same type
+      -Wno-shadow
   )
 
   if(MSVC)

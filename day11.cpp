@@ -16,9 +16,6 @@ int floodBlink(utils::Board<char>& board, utils::BoardField<char> field) {
 int main() {
     auto board = utils::read_board<char>();
 
-    int w = board.width;
-    int h = board.height;
-
     int turns = 0;
     int blinks = 0;
     while (true) {

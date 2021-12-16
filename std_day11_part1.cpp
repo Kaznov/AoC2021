@@ -4,7 +4,9 @@
 #include <vector>
 
 int floodBlink(std::vector<std::string>& board, int row, int col) {
-    if (row < 0 || col < 0 || row >= board.size() || col >= board[0].size())
+    if (row < 0 || col < 0
+        || static_cast<size_t>(row) >= board.size()
+        || static_cast<size_t>(col) >= board[0].size())
         return 0;
 
     board[row][col] += board[row][col] != '0';

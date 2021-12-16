@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <map>
 #include <memory>
 #include <numeric>
@@ -50,12 +51,16 @@ using std::string;
 using std::set;
 using std::map;
 using std::queue;
+using std::priority_queue;
 using std::cin;
 using std::cout;
 using std::endl;
 using std::swap;
 using std::max;
 using std::min;
+
+template<typename T>
+using limits = std::numeric_limits<T>;
 
 namespace stdv = std::views;
 namespace stdr = std::ranges;
@@ -69,11 +74,17 @@ void print(Range&& r, std::string_view sep = " ", Proj proj = {}) {
     std::cout << std::endl << std::endl;
 }
 
+template <typename T = int>
+struct Point {
+    T x{}, y{};
+    auto operator<=>(const Point& other) const = default;
+};
+
 template<typename T>
 struct Board {
+    std::vector<std::vector<T>> fields;
     size_t width;
     size_t height;
-    std::vector<std::vector<T>> fields;
 
     Board(size_t width, size_t height, T fill = {})
         : fields(height, std::vector<T>(width, fill)),
@@ -82,6 +93,9 @@ struct Board {
     struct Field {
         std::reference_wrapper<T> v;
         size_t row, col;
+
+        Point<int> to_point() const { return { static_cast<int>(col),
+                                               static_cast<int>(row) }; }
     };
 
     Field operator()(size_t row, size_t col) {
@@ -91,9 +105,16 @@ struct Board {
     Field get(size_t row, size_t col) {
         return Field{ fields[row][col], row, col };
     }
+    Field get(Point<int> point) {
+        return get(point.y, point.x);
+    }
 
     T& getv(size_t row, size_t col) {
         return fields[row][col];
+    }
+
+    T& getv(Point<int> point) {
+        return getv(point.y, point.x);
     }
 
     std::vector<Field> adjacent(size_t row, size_t col) {
@@ -154,12 +175,13 @@ struct Board {
 
         std::vector<T> empty_row(result.width, frame_fill);
         result.fields.insert(result.fields.begin(), empty_row);
-        result.push_back(empty_row);
+        result.fields.push_back(empty_row);
 
         return result;
     }
 
-    template <typename U, typename Proj = std::identity>
+    template <typename Proj = std::identity,
+              typename U = std::invoke_result_t<Proj, T>>
     Board<U> projected(Proj proj = {}) const {
         Board<U> b(width, height);
         std::ranges::transform(fields, b.fields.begin(), [&proj](auto& row) {
@@ -485,18 +507,31 @@ ScanResult input_line(std::string_view format, Args&... args) {
     return scan(line, format, args...);
 }
 
-template<typename Range, typename Acc = std::ranges::range_value_t<Range>>
-auto sum(Range&& r, Acc zero = {}) {
-    return std::accumulate(std::ranges::begin(r), std::ranges::end(r), zero);
+template<typename Range, typename Acc = std::ranges::range_value_t<Range>,
+         typename Proj = std::identity>
+auto sum(Range&& r, Acc zero = {}, Proj proj = {}) {
+    return std::accumulate(std::ranges::begin(r), std::ranges::end(r), zero,
+        [=](Acc acc, auto&& element) -> Acc {
+            return acc + std::invoke(proj, element);
+        });
+}
+
+template<typename Range, typename Acc = std::ranges::range_value_t<Range>,
+         typename Proj = std::identity>
+auto product(Range&& r, Acc one = {1}, Proj proj = {}) {
+    return std::accumulate(std::ranges::begin(r), std::ranges::end(r), one,
+        [=](Acc acc, auto&& element) -> Acc {
+            return acc * std::invoke(proj, element);
+        });
 }
 
 template<typename T>
-size_t to_chars_len(T value, int base = 10) noexcept
+size_t to_chars_len(T value, uint base = 10) noexcept
 {
     uint n = 1;
     for (;;)
 	{
-	  if (value < (uint)base) return n;
+	  if (value < base) return n;
 	  value /= base;
 	  n++;
 	}
@@ -506,7 +541,9 @@ template<typename T>
 std::string int_to_string(T value, size_t base) {
     static_assert(std::is_integral_v<T>);
     bool neg = value < 0;
-    size_t len = to_chars_len(value, base);
+    using UT = std::make_unsigned_t<T>;
+    UT absvalue = neg ? -static_cast<UT>(value) : static_cast<UT>(value);
+    size_t len = to_chars_len(absvalue, base);
     std::string result(neg + len, '\0');
     if (auto [_, ec] = std::to_chars(result.data(), result.data() + len, value);
         ec != std::errc{}) throw;
@@ -542,10 +579,10 @@ struct FindUnion {
     }
 
     size_t find(size_t id) {
-        int rep = id;
+        size_t rep = id;
         while (rep != reps[rep]) rep = reps[rep];
         while (id != rep) {
-            int idnext = reps[id];
+            size_t idnext = reps[id];
             reps[id] = rep;
             id = idnext;
         }
@@ -553,7 +590,7 @@ struct FindUnion {
     }
 
     void union_(size_t id1, size_t id2) {
-        int rep1 = find(id1), rep2 = find(id2);
+        size_t rep1 = find(id1), rep2 = find(id2);
         if (rep1 == rep2) return;
         reps[rep2] = rep1;
         elements[rep1] = unionizer(elements[rep1], elements[rep2]);
@@ -771,6 +808,7 @@ inline namespace CPOs {
     inline constexpr detail::pair_first_impl pair_first;
     inline constexpr detail::pair_second_impl pair_second;
 }
+
 }
 
 using utils::hashmap;
