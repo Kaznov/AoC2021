@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <charconv>
@@ -8,15 +9,18 @@
 #include <cstdio>
 #include <cstdint>
 #include <deque>
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <list>
 #include <map>
 #include <memory>
 #include <numeric>
 #include <queue>
+#include <random>
 #include <ranges>
 #include <set>
 #include <sstream>
@@ -150,7 +154,23 @@ struct Board {
         }
         return result;
     }
-    
+
+    std::array<Field, 9> square(size_t row, size_t col) {
+        assert(row > 0 && col > 0 && row < height - 1 && col < width - 1);
+        std::array<Field, 9> result {
+            get(row - 1, col - 1),
+            get(row - 1, col + 0),
+            get(row - 1, col + 1),
+            get(row + 0, col - 1),
+            get(row + 0, col + 0),
+            get(row + 0, col + 1),
+            get(row + 1, col - 1),
+            get(row + 1, col + 0),
+            get(row + 1, col + 1),
+        };
+        return result;
+    }
+
     std::vector<Field> adjacent_corner(Field f) { return adjacent_corner(f.row, f.col); }
 
     std::vector<Field> all() {
@@ -163,7 +183,7 @@ struct Board {
         return result;
     }
 
-    Board framed(T frame_fill) {
+    Board framed(T frame_fill) const {
         Board<T> result = *this;
         result.height += 2;
         result.width += 2;
@@ -180,6 +200,22 @@ struct Board {
         return result;
     }
 
+    Board unframed() const {
+        Board<T> result = *this;
+        result.height -= 2;
+        result.width -= 2;
+
+        result.fields.pop_back();
+        result.fields.erase(result.fields.begin());
+
+        for (auto& row : result.fields) {
+            row.pop_back();
+            row.erase(row.begin());
+        }
+        return result;
+    }
+
+
     template <typename Proj = std::identity,
               typename U = std::invoke_result_t<Proj, T>>
     Board<U> projected(Proj proj = {}) const {
@@ -192,7 +228,7 @@ struct Board {
         return b;
     }
 
-    void print(std::string_view sep = " ", int width_per_element = 0) {
+    void print(std::string_view sep = " ", int width_per_element = 0) const {
         for (const auto& row : fields) {
             for (const auto& element : row) {
                 if (width_per_element > 0)
@@ -202,6 +238,7 @@ struct Board {
             }
             std::cout << std::endl;
         }
+        std::cout << std::endl;
     }
 
     struct EmptyState {};
@@ -292,7 +329,7 @@ ScanResult scan_vector(std::vector<T>& out, std::istream& in,
                        std::string_view separator = " ", char delimiter = 0) {
     out.clear();
     T next;
-    size_t initial_size = out.size(); 
+    size_t initial_size = out.size();
     while (in.peek() != EOF && in.peek() != delimiter && in >> std::ws &&
            in.peek() != EOF && in.peek() != delimiter && in >> next) {
         out.push_back(next);
@@ -304,7 +341,7 @@ ScanResult scan_vector(std::vector<T>& out, std::istream& in,
             }
             if (eq != separator.size()) {
                 while (eq--) in.unget(); // impl defined, let's hope it works
-                break; 
+                break;
             }
         }
     }
@@ -372,6 +409,7 @@ inline void scan_delimiters(std::istream& in, std::string_view& format) {
             // skip first {
             ++format_ptr; --size;
         }
+
         // skip the delimiter character
         ++format_ptr; --size;
         if (next == ' ') {
@@ -438,7 +476,7 @@ ScanResult scan_rec(std::istream& in, std::string_view format, T& arg1, Args&...
             vec_format_size == 0
                 ? std::string_view{" "}
                 : std::string_view{vec_format_ptr, vec_format_size};
-        char delimiter = 
+        char delimiter =
             size <= vec_format_size + 1 ? '\0' : format_ptr[vec_format_size + 1];
         delimiter = delimiter == separator[0] || delimiter == '{' ? '\0' : delimiter;
         scan_vector<typename T::value_type>(arg1, in, separator, delimiter);
@@ -741,7 +779,7 @@ auto median(RandomIt begin, RandomIt end, Compare comp = {})
 }
 
 template <typename Range, typename Compare = std::ranges::less>
-requires std::ranges::common_range<Range> 
+requires std::ranges::common_range<Range>
         && std::ranges::random_access_range<Range>
 auto median(Range range, Compare comp = {})
         -> median_result<
@@ -758,7 +796,7 @@ bool find_pos(Range&& range, const T& element) {
 template <typename Range, typename T>
 requires std::ranges::input_range<Range>
 bool contains(Range&& range, const T& element) {
-    return std::ranges::find(range, element) == std::ranges::end(range);
+    return std::ranges::find(range, element) != std::ranges::end(range);
 }
 
 template <typename T, typename Comp>
@@ -783,22 +821,22 @@ using eq_to = compares_to<T, stdr::equal_to>;
 namespace detail {
 struct pair_first_impl {
     template <typename T, typename U>
-    auto&& operator()(const std::pair<T, U>& p) {
+    auto&& operator()(const std::pair<T, U>& p) const {
         return (p.first);
     }
     template <typename T, typename U>
-    auto&& operator()(std::pair<T, U>&& p) {
+    auto&& operator()(std::pair<T, U>&& p) const {
         return std::move(p.first);
     }
 };
 
 struct pair_second_impl {
     template <typename T, typename U>
-    auto&& operator()(const std::pair<T, U>& p) {
+    auto&& operator()(const std::pair<T, U>& p) const {
         return (p.second);
     }
     template <typename T, typename U>
-    auto&& operator()(std::pair<T, U>&& p) {
+    auto&& operator()(std::pair<T, U>&& p) const {
         return std::move(p.second);
     }
 };
@@ -809,6 +847,25 @@ inline namespace CPOs {
     inline constexpr detail::pair_second_impl pair_second;
 }
 
+
+class Rng {
+    uint64_t state;
+public:
+    using result_type = uint64_t;
+
+    explicit Rng(
+        uint64_t seed = 1) : state{seed}{}
+
+    static constexpr result_type min() { return 0; }
+    static constexpr result_type max() {
+        return std::numeric_limits<result_type>::max(); }
+    constexpr result_type operator()() {
+        state ^= state << 13;
+        state ^= state >> 7;
+        state ^= state << 17;
+        return state;
+    }
+};
 }
 
 using utils::hashmap;
