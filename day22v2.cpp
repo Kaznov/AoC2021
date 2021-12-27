@@ -35,7 +35,7 @@ int main() {
 
     u64 total_size = 0;
 
-    for (int xid = 0; xid < xlines.size() - 1; xid++) {
+    for (int xid = 0; xid < xlines.size() - 1; xid++)
     for (int yid = 0; yid < ylines.size() - 1; yid++)
     for (int zid = 0; zid < zlines.size() - 1; zid++) {
         int x0 = xlines[xid];
@@ -56,7 +56,6 @@ int main() {
         if (lit)
             total_size += (u64)(x1 - x0) * (u64)(y1 - y0) * (u64)(z1 - z0);
     }
-    std::cout << xid << "\n";
-    }
+
     std::cout << total_size << "\n";
 }
