@@ -545,6 +545,10 @@ ScanResult input_line(std::string_view format, Args&... args) {
     return scan(line, format, args...);
 }
 
+void input_ignore_line() {
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
 template<typename Range, typename Acc = std::ranges::range_value_t<Range>,
          typename Proj = std::identity>
 auto sum(Range&& r, Acc zero = {}, Proj proj = {}) {
