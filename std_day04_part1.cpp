@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iostream>
-#include <iterator>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -36,31 +36,16 @@ Bingo readBoard() {
     return bingo;
 }
 
-std::vector<std::string> splitText(std::string text, char sep = ' ') {
-    size_t pos = text.find(sep);
-    size_t initial_pos = 0;
-    std::vector<std::string> result;
-
-    while (pos != std::string::npos) {
-        result.emplace_back(text.substr(initial_pos, pos - initial_pos));
-        initial_pos = pos + 1;
-        pos = text.find(sep, initial_pos);
-    }
-
-    // Add the last one
-    result.push_back(text.substr(initial_pos));
-
-    return result;
-}
-
 int main() {
     std::string random_nums_text;
     std::getline(std::cin, random_nums_text);
-    auto random_nums_split = splitText(random_nums_text, ',');
+
+    std::istringstream random_nums_ss(random_nums_text);
     std::vector<int> random_nums;
-    std::transform(std::begin(random_nums_split), std::end(random_nums_split),
-                   std::back_inserter(random_nums),
-                   [](auto&& s) -> int { return std::stoi(s); });
+    // repeat: read number, ignore character (','), as long as it works
+    for (int next; random_nums_ss >> next; random_nums_ss.ignore()) {
+        random_nums.push_back(next);
+    }
 
     std::vector<Bingo> boards;
     while (std::cin.peek() != EOF && std::cin) {
@@ -90,5 +75,5 @@ int main() {
         if (winner_score > 0) break;
     }
 
-    std::cout << winner_score;
+    std::cout << "Part 1: " << winner_score << "\n";
 }

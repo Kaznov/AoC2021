@@ -39,5 +39,5 @@ int main() {
                                             [](auto&& p) -> bool {
                                                 return p.second > 1;
                                             });
-    printf("%zu", overlaping_vents);
+    printf("Part2: %zu\n", overlaping_vents);
 }

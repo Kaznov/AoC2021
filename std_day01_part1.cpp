@@ -1,18 +1,16 @@
-#include <algorithm>
 #include <iostream>
-#include <iterator>
-#include <numeric>
-#include <vector>
+#include <ranges>
+
+namespace stdr = std::ranges;
 
 int main() {
-    std::vector<int> input;
-    std::copy(std::istream_iterator<int>{std::cin}, std::istream_iterator<int>{},
-              std::back_inserter(input));
-    std::vector<int> increases;
-    std::adjacent_difference(std::begin(input), std::end(input),
-                             std::back_inserter(increases),
-                             std::greater<>{});
-    increases.erase(increases.begin());
-    int result = std::accumulate(std::begin(increases), std::end(increases), 0);
-    std::cout << result;
+    int last_value = 1000000;  // greater than any input
+    int count = 0;
+
+    for (int v : stdr::istream_view<int>(std::cin)) {
+        if (v > last_value) ++count;
+        last_value = v;
+    }
+
+    std::cout << "Part 1: " << count << "\n";
 }

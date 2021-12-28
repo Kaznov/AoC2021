@@ -34,7 +34,7 @@ std::map<char, char> findMapping(std::string (&input)[10]) {
     for (auto&& s : input)
         for (char c : s)
             ++occ[c];
-            
+
     constexpr auto npos = std::string::npos;
 
     // count occurences of each segment
@@ -88,7 +88,8 @@ int calculateOutput(std::string (&output)[4],
 int main() {
     int result = 0;
 
-    while (std::cin.peek() && std::cin) {
+    constexpr int eof = std::istream::traits_type::eof();
+    while (std::cin.peek() != eof && std::cin) {
         Display d = readLine();
         auto mapping = findMapping(d.input);
         result += calculateOutput(d.output, mapping);

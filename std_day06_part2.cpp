@@ -2,9 +2,6 @@
 #include <cstdio>
 #include <numeric>
 
-// PART 1:
-// constexpr int kDays = 80;
-// PART 2:
 constexpr int kDays = 256;
 
 int main() {
@@ -21,5 +18,5 @@ int main() {
     }
 
     auto sum = std::accumulate(fishes_of_epoch, fishes_of_epoch + 9, 0ull);
-    printf("%llu", sum);
+    printf("Part 2: %llu\n", sum);
 }

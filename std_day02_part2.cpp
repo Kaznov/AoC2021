@@ -5,6 +5,7 @@ int main() {
     std::string command;
     int value;
     long long int position = 0, depth = 0, aim = 0;
+
     while (std::cin >> command >> value) {
         if (command == "forward") {
             position += value;
@@ -15,5 +16,6 @@ int main() {
             aim -= value;
         }
     }
-    std::cout << position * depth;
+
+    std::cout << "Part 2: " << position * depth << "\n";
 }

@@ -21,12 +21,13 @@ Display readLine() {
 int main() {
     int count1478 = 0;
 
-    while (std::cin.peek() && std::cin) {
+    constexpr int eof = std::istream::traits_type::eof();
+    while (std::cin.peek() != eof && std::cin) {
         Display d = readLine();
         for (auto&& o : d.output)
             count1478 += o.size() == 2 || o.size() == 3 ||
                          o.size() == 4 || o.size() == 7;
     }
 
-    std::cout << count1478;
+    std::cout << "Part 1: " << count1478 << "\n";
 }

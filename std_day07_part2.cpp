@@ -35,6 +35,5 @@ int main() {
         best_cost = next_cost;
     }
 
-    printf("Target: %d\n", guess);
-    printf("Cost: %ld", best_cost);
+    printf("Part 2: %ld\n", best_cost);
 }
