@@ -3,19 +3,19 @@
 int main() {
     vec<int> input;
     utils::input_vector(input);
-    vec<int> increases;
-    std::adjacent_difference(std::begin(input), std::end(input),
-                             std::back_inserter(increases),
-                             stdr::greater{});
-    cout << "Part 1: " << utils::sum(increases | stdv::drop(1))
-         << "\n";
 
-    int increasing_sum_count = 0;
-    int last_moving_sum = 1000000;
-    for (size_t i = 0; i < input.size() - 2; ++i) {
-        int sum = input[i] + input[i + 1] + input[i + 2];
-        if (sum > last_moving_sum) ++increasing_sum_count;
-        last_moving_sum = sum;
+    int increasing_count = 0;
+    for (size_t i = 0; i < input.size() - 1; ++i) {
+        increasing_count += input[i] < input[i + 1];
     }
-    cout << "Part 2: " << increasing_sum_count << "\n";
+
+    cout << "Part 1: " << increasing_count << "\n";
+
+
+    int increasing_triplets_count = 0;
+    for (size_t i = 0; i < input.size() - 3; ++i) {
+        increasing_triplets_count += input[i] < input [i + 3];
+    }
+
+    std::cout << "Part 2: " << increasing_triplets_count << "\n";
 }

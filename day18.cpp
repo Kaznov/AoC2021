@@ -50,7 +50,7 @@ bool explode(SnailNum& l) {
 
     auto consume = [&l, &it](Token::Type type) {
         assert(it->type == type);
-        l.erase(it++);
+        it = l.erase(it);
     };
 
     auto prev = std::prev(it);
@@ -81,9 +81,8 @@ bool split(SnailNum& l) {
         stdr::find_if(l, utils::greatereq_than<int>(10), &Token::v);
 
     if (first_bigger == l.end()) return false;
-    auto next = std::next(first_bigger);
     int num = first_bigger->v;
-    l.erase(first_bigger);
+    auto next = l.erase(first_bigger);
     l.insert(next, {Token::open});
     l.insert(next, {Token::value, num / 2});
     l.insert(next, {Token::comma});
